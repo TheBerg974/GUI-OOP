@@ -174,7 +174,6 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     File outputFile;
     BufferedImage img;
     BufferedImage original;
-
     private void greyScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_greyScaleActionPerformed
 
         try {
@@ -225,10 +224,9 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         }else {
             img = original;
             outputImagePanel.setImage(img);
-        }
-            
+        } 
+        //Gamma Correction Method
         gammaCorrection();
-
     }//GEN-LAST:event_applyButtonActionPerformed
 
     public void gammaCorrection() {
