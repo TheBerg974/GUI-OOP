@@ -23,7 +23,7 @@ public class Main {
             
             BufferedImage input4 = ImageIO.read(new File("images/Lenna.png"));
             BufferedImage output4= ImageProcessing.applyEdgeDetection(input4);
-            ImageIO.write(output4, "png", new File("images/Lenna_Sharpen.png"));
+            ImageIO.write(output4, "png", new File("images/Lenna_Edge.png"));
         }
         catch(Exception e)
         {
