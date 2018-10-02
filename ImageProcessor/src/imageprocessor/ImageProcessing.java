@@ -48,8 +48,7 @@ public class ImageProcessing {
         return applyConvolutionFilter(img, gaussianKernel);
     }
     
-    public static BufferedImage applyBoxBlur(BufferedImage img, int radius) {
-        
+    public static BufferedImage applyBoxBlur(BufferedImage img, int radius) {        
         final int ARRAY_DIM = 2*radius+1;
         final float boxKernel[][] = new float[ARRAY_DIM][ARRAY_DIM];
         float value = 1.0f /(ARRAY_DIM*ARRAY_DIM);

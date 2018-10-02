@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -28,6 +29,8 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
      */
     public ImageProcessorWindow() {
         initComponents();
+        inputImagePanel.setImage("images/no-image.png");
+        outputImagePanel.setImage("images/no-image.png");
     }
 
     /**
@@ -258,8 +261,10 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     File inputFile;
     File outputFile;
     BufferedImage img;
+    BufferedImage output; 
     int previousValue = 0;
     boolean applied = false;
+    
 
     /**
      * Action performed for open button
@@ -280,48 +285,56 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
      * @param evt
      */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        saveFile();
+        try {
+            saveFile();
+        } catch (IOException ex) {
+            Logger.getLogger(ImageProcessorWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
 
-        BufferedImage output = imageCopy(img);
+        output = imageCopy(img);
         BufferedImage copy = imageCopy(output);
-        
-        if(sharpenBox.isSelected()) {
+
+        if (sharpenBox.isSelected()) {
             output = sharpen(output);
         }
-        
+
         //Reducing time for the box blur by only aplying it when the slider value changes         
-        if(boxBlurSlider.getValue() != 50 && !applied) {
+        if (boxBlurSlider.getValue() != 50 && !applied) {
             output = boxBlurFliter(output, boxBlurSlider.getValue());
             copy = imageCopy(output);
             previousValue = boxBlurSlider.getValue();
             applied = true;
-        } else if(applied && previousValue != boxBlurSlider.getValue()) {
+        } else if (applied && previousValue != boxBlurSlider.getValue()) {
             output = boxBlurFliter(output, boxBlurSlider.getValue());
             copy = imageCopy(output);
             previousValue = boxBlurSlider.getValue();
             applied = false;
-        } else if(applied) {
-           output = copy;
-        } 
+        } else if (applied) {
+            output = copy;
+        }
         
-        if(gaussianFilterBox.isSelected()){
+        //Gaussian filter implementation
+        if (gaussianFilterBox.isSelected()) {
             output = gaussianFilter(output);
         }
         
+        //Edge detection Implementation
         if (edgeCheck.isSelected()) {
             output = edgeDetection(output);
         }
-
+        
+        //Grey Scales implementation
         if (greyScale.isSelected()) {
             output = greyScales(output);
         }
-
+        
         outputImagePanel.setImage(output);
         processLabel.setText("Image Processed");
-
+        
+        //Implementation of gamma correction 
         gammaCorrection(output);
     }//GEN-LAST:event_applyButtonActionPerformed
 
@@ -353,7 +366,11 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
      * @param evt
      */
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-        saveFile();
+        try {
+            saveFile();
+        } catch (IOException ex) {
+            Logger.getLogger(ImageProcessorWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     /**
@@ -404,32 +421,35 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         }
         return imgo;
     }
-    
+
     /**
      * Method for Gaussian Blur Filter
+     *
      * @param imgo
-     * @return 
+     * @return
      */
     private BufferedImage gaussianFilter(BufferedImage imgo) {
         imgo = ImageProcessing.applyGaussianBlur(imgo);
         return imgo;
     }
-    
+
     /**
      * Method for Box Blur Filter
+     *
      * @param imgo
      * @param radius
-     * @return 
+     * @return
      */
     private BufferedImage boxBlurFliter(BufferedImage imgo, int radius) {
-        imgo = ImageProcessing.applyBoxBlur(img, radius/10);
+        imgo = ImageProcessing.applyBoxBlur(img, radius / 10);
         return imgo;
     }
-    
+
     /**
      * Method to apply sharpen filter
+     *
      * @param imgo
-     * @return 
+     * @return
      */
     private BufferedImage sharpen(BufferedImage imgo) {
         imgo = ImageProcessing.applySharpen(imgo);
@@ -454,6 +474,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     private void openFileChooser() throws IOException {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Select an image");
+        fc.setCurrentDirectory(new File("images"));
         FileNameExtensionFilter fnef = new FileNameExtensionFilter("PNG & JPG Files", "jpg", "png");
         fc.setFileFilter(fnef);
         int returnVal = fc.showOpenDialog(this);
@@ -463,6 +484,8 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
             img = ImageIO.read(inputFile);
             inputImagePanel.setImage(inputFile.getAbsolutePath());
             outputImagePanel.setImage(outputFile.getAbsolutePath());
+            boxBlurSlider.setValue(50);
+            gammaCorrectionSlider.setValue(0);
             processLabel.setText("Image Loaded");
         } else {
             System.out.println("File access cancelled by user.");
@@ -474,12 +497,17 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
      *
      * @return void
      */
-    private void saveFile() {
-        try {
-            ImageIO.write(img, "png", outputFile);
-        } catch (IOException ex) {
-            Logger.getLogger(ImageProcessorWindow.class.getName()).log(Level.SEVERE, null, ex);
+    private void saveFile() throws IOException {
+        JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle("Save your Image");
+        fc.setCurrentDirectory(new File("images"));
+        int returnVal = fc.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            ImageIO.write(output, "png", new File(fc.getSelectedFile().getAbsolutePath()+ ".png"));
+        } else {
+            System.out.println("File access cancelled by user.");
         }
+        processLabel.setText("Image Saved");
     }
 
     /**
@@ -505,12 +533,9 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ImageProcessorWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
