@@ -31,6 +31,8 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         initComponents();
         inputImagePanel.setImage("images/no-image.png");
         outputImagePanel.setImage("images/no-image.png");
+        boxBlurSlider.setValue(0);
+        
     }
 
     /**
@@ -64,6 +66,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         FileItem = new javax.swing.JMenu();
         OpenMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
+        applyButtonItem = new javax.swing.JMenuItem();
         escapeMenuItem = new javax.swing.JMenuItem();
 
         checkbox1.setLabel("checkbox1");
@@ -150,6 +153,15 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
             }
         });
         FileItem.add(saveMenuItem);
+
+        applyButtonItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        applyButtonItem.setText("Apply");
+        applyButtonItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonItemActionPerformed(evt);
+            }
+        });
+        FileItem.add(applyButtonItem);
 
         escapeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
         escapeMenuItem.setText("Exit");
@@ -302,7 +314,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         }
 
         //Reducing time for the box blur by only aplying it when the slider value changes         
-        if (boxBlurSlider.getValue() != 50 && !applied) {
+        if (boxBlurSlider.getValue() != 0 && !applied) {
             output = boxBlurFliter(output, boxBlurSlider.getValue());
             copy = imageCopy(output);
             previousValue = boxBlurSlider.getValue();
@@ -372,6 +384,10 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
             Logger.getLogger(ImageProcessorWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
+
+    private void applyButtonItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonItemActionPerformed
+        applyButtonActionPerformed(evt);
+    }//GEN-LAST:event_applyButtonItemActionPerformed
 
     /**
      * Gamma correction method
@@ -484,8 +500,9 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
             img = ImageIO.read(inputFile);
             inputImagePanel.setImage(inputFile.getAbsolutePath());
             outputImagePanel.setImage(outputFile.getAbsolutePath());
-            boxBlurSlider.setValue(50);
+            boxBlurSlider.setValue(0);
             gammaCorrectionSlider.setValue(0);
+            applied = false;
             processLabel.setText("Image Loaded");
         } else {
             System.out.println("File access cancelled by user.");
@@ -532,10 +549,8 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            
+        try {            
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
-
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ImageProcessorWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -559,6 +574,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     private javax.swing.JMenu FileItem;
     private javax.swing.JMenuItem OpenMenuItem;
     private javax.swing.JButton applyButton;
+    private javax.swing.JMenuItem applyButtonItem;
     private javax.swing.JSlider boxBlurSlider;
     private javax.swing.JCheckBox boxFilterCheck;
     private java.awt.Checkbox checkbox1;
