@@ -32,7 +32,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         inputImagePanel.setImage("images/no-image.png");
         outputImagePanel.setImage("images/no-image.png");
         boxBlurSlider.setValue(0);
-        
+
     }
 
     /**
@@ -273,10 +273,8 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     File inputFile;
     File outputFile;
     BufferedImage img;
-    BufferedImage output; 
-    int previousValue = 0;
-    boolean applied = false;
-    
+    BufferedImage output;
+    boolean changes;
 
     /**
      * Action performed for open button
@@ -298,7 +296,11 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
      */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
-            saveFile();
+            if (!changes) {
+                processLabel.setText("ERROR: IMAGE HAS NOT BEEN MODIFIED");
+            } else {
+                saveFile();
+            }
         } catch (IOException ex) {
             Logger.getLogger(ImageProcessorWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -307,45 +309,43 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
 
         output = imageCopy(img);
-        BufferedImage copy = imageCopy(output);
+        changes = false;
+        
+        processLabel.setText("...");
 
         if (sharpenBox.isSelected()) {
             output = sharpen(output);
+            changes = true;
         }
 
-        //Reducing time for the box blur by only aplying it when the slider value changes         
-        if (boxBlurSlider.getValue() != 0 && !applied) {
+        //Box Blur implementation        
+        if (boxBlurSlider.getValue() != 0) {
             output = boxBlurFliter(output, boxBlurSlider.getValue());
-            copy = imageCopy(output);
-            previousValue = boxBlurSlider.getValue();
-            applied = true;
-        } else if (applied && previousValue != boxBlurSlider.getValue()) {
-            output = boxBlurFliter(output, boxBlurSlider.getValue());
-            copy = imageCopy(output);
-            previousValue = boxBlurSlider.getValue();
-            applied = false;
-        } else if (applied) {
-            output = copy;
+            changes = true;
         }
-        
+
+
         //Gaussian filter implementation
         if (gaussianFilterBox.isSelected()) {
             output = gaussianFilter(output);
+            changes = true;
         }
-        
+
         //Edge detection Implementation
         if (edgeCheck.isSelected()) {
             output = edgeDetection(output);
+            changes = true;
         }
-        
+
         //Grey Scales implementation
         if (greyScale.isSelected()) {
             output = greyScales(output);
+            changes = true;
         }
-        
+
         outputImagePanel.setImage(output);
-        processLabel.setText("Image Processed");
-        
+        processLabel.setText("IMAGE PROCESSED");
+
         //Implementation of gamma correction 
         gammaCorrection(output);
     }//GEN-LAST:event_applyButtonActionPerformed
@@ -412,6 +412,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
                         brightness = (float) Math.pow(brightnessTemp, ((1000.0 - gammaCorrectionSlider.getValue()) / 1000.0));
                         Color newColor = new Color(Color.HSBtoRGB(hue, saturation, brightness));
                         img1.setRGB(i, j, newColor.getRGB());
+                        changes = true;
                     }
                 }
                 outputImagePanel.setImage(img1);
@@ -491,7 +492,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Select an image");
         fc.setCurrentDirectory(new File("images"));
-        FileNameExtensionFilter fnef = new FileNameExtensionFilter("PNG & JPG Files", "jpg", "png");
+        FileNameExtensionFilter fnef = new FileNameExtensionFilter("PNG & JPG Files", "jpg", "png", "jpeg", "bmp");
         fc.setFileFilter(fnef);
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -502,10 +503,10 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
             outputImagePanel.setImage(outputFile.getAbsolutePath());
             boxBlurSlider.setValue(0);
             gammaCorrectionSlider.setValue(0);
-            applied = false;
-            processLabel.setText("Image Loaded");
+            changes = false;
+            processLabel.setText("IMAGE LOADED");
         } else {
-            System.out.println("File access cancelled by user.");
+            processLabel.setText("FILE ACCESS CANCELED BY USER");
         }
     }
 
@@ -520,11 +521,13 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         fc.setCurrentDirectory(new File("images"));
         int returnVal = fc.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            ImageIO.write(output, "png", new File(fc.getSelectedFile().getAbsolutePath()+ ".png"));
+            ImageIO.write(output, "png", new File(fc.getSelectedFile().getAbsolutePath() + "_modified.png"));
+            processLabel.setText("IMAGE SAVED");
         } else {
-            System.out.println("File access cancelled by user.");
+            processLabel.setText("FILE ACCESS CANCELED BY USER");
+
         }
-        processLabel.setText("Image Saved");
+        
     }
 
     /**
@@ -549,7 +552,7 @@ public class ImageProcessorWindow extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {            
+        try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ImageProcessorWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
