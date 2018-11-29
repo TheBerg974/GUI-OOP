@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="595.0" prefWidth="1220.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="finalexam.FXMLDocumentController">
+    <children>
+        <Button fx:id="button" layoutX="4.0" layoutY="497.0" onAction="#handleButtonAction" prefHeight="35.0" prefWidth="1213.0" text="Get Weather!">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font></Button>
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <Label fx:id="feedBackLabel" layoutX="407.0" layoutY="548.0" prefHeight="25.0" prefWidth="454.0" text="Press Get Weather to show the current Weather">
+         <font>
+            <Font name="Comic Sans MS Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="513.0" layoutY="14.0" text="Current Weather">
+         <font>
+            <Font name="Comic Sans MS Bold" size="26.0" />
+         </font>
+      </Label>
+      <Label layoutX="148.0" layoutY="77.0" text="Montreal">
+         <font>
+            <Font name="Comic Sans MS Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="575.0" layoutY="69.0" text="Honolulu">
+         <font>
+            <Font name="Comic Sans MS Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="966.0" layoutY="69.0" text="Antartica">
+         <font>
+            <Font name="Comic Sans MS Bold" size="18.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="montrealWeather" fitHeight="256.0" fitWidth="256.0" layoutX="58.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="honoluluWeather" fitHeight="256.0" fitWidth="256.0" layoutX="482.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="antarticaWeather" fitHeight="256.0" fitWidth="256.0" layoutX="879.0" layoutY="102.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="minMtl" layoutX="68.0" layoutY="398.0" text="Min:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="maxMtl" layoutX="68.0" layoutY="445.0" text="Max:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="minHon" layoutX="484.0" layoutY="398.0" text="Min:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="maxHon" layoutX="484.0" layoutY="445.0" text="Max:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="minAnta" layoutX="879.0" layoutY="398.0" text="Min:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="maxAnta" layoutX="879.0" layoutY="454.0" text="Max:">
+         <font>
+            <Font name="Comic Sans MS" size="18.0" />
+         </font>
+      </Label>
+    </children>
+</AnchorPane>

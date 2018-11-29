@@ -1,9 +1,6 @@
 package spotifyparser;
 
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 
 
 public class Album {
